@@ -11,8 +11,7 @@
                     <form class="form" action="{% url action skill.id %}" method="post" enctype="multipart/form-data">
                 {% else %}
                     <form class="form" action="{% url action  %}" method="post" enctype="multipart/form-data">
-                {% endif %}
-                    
+                {% endif %}             
                     {% csrf_token %}
                     {{ form }}
                     <input class="btn btn--sub btn--lg  my-md" type="submit" value="Update" />

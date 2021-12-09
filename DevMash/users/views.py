@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Message, Profile, Skill
-from .forms import CustomUserCreationForm, EditProfileForm, AddSkillForm
+from .forms import CustomUserCreationForm, EditProfileForm, AddSkillForm, SendMessageForm
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from .utills import search, paginate_projects
@@ -159,3 +159,25 @@ def inbox_message(request, message_id):
         return render(request, 'users/message.html', ctx)
     except (ObjectDoesNotExist, ValidationError) as e:
         return redirect(('inbox'))
+
+def send_message(request, receiver_id):
+    form = SendMessageForm(initial={'recipient': receiver_id})
+    sender = request.user
+
+    if sender.is_authenticated:
+        form = SendMessageForm(initial={'name': sender.profile.name, 'email': sender.profile.email, 'recipient': receiver_id})
+        
+    if request.method == 'POST':
+        form = SendMessageForm(request.POST)
+        msg = form.save(commit=False)
+        msg.sender = None
+        if request.user.is_authenticated:
+            msg.sender = request.user.profile
+        msg.save()
+        messages.success(request, 'Message sent successfully.')
+        return redirect('profile', user_id=receiver_id)
+    
+    ctx = {
+        'form' : form
+    }
+    return render(request, 'users/message_form.html', ctx)
