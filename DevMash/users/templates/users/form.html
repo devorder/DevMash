@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <main class="formPage my-xl">
+        <div class="content-box">
+            <div class="formWrapper">
+                <a class="backButton" href="{% url 'user-account' %}"><i class="im im-angle-left"></i></a>
+                <br>
+                
+                {% if skill.id %}
+                    <form class="form" action="{% url action skill.id %}" method="post" enctype="multipart/form-data">
+                {% else %}
+                    <form class="form" action="{% url action  %}" method="post" enctype="multipart/form-data">
+                {% endif %}
+                    
+                    {% csrf_token %}
+                    {{ form }}
+                    <input class="btn btn--sub btn--lg  my-md" type="submit" value="Update" />
+                </form>
+            </div>
+        </div>
+    </main>
+
+{% endblock content %}
+    
